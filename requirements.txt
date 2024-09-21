@@ -1,0 +1,34 @@
+# Django Stuff (+APIs)
+django==5.1
+django-phonenumber-field==8.0.0
+django-ninja==1.3.0
+
+# API Request Client(s)
+httpx==0.27.2
+requests==2.32.3
+
+# AWS Bucket S3 Storage
+django-storages==1.14.4
+boto3==1.35.24
+
+# CLI-Stuff
+tqdm==4.66.5
+
+# Dates / Times Conversion(s)
+pendulum==3.0.0
+
+# Debugging / Logging
+icecream==2.1.3
+loguru==0.7.2
+
+# Environment / Secrets
+python-dotenv==1.0.1
+
+# Image Files
+pillow==10.4.0
+
+# PostgreSQL
+psycopg2==2.9.9
+
+# Unit Tests
+pytest-django==4.9.0
