@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import override
 
 from django.contrib.auth.models import User
@@ -12,8 +13,11 @@ def avatar_upload_to(instance: 'Client', filename: str):
     """
     Generator function specifying where to upload client's avatar.
     """
+    # Get the filename's extension. (".jpg", ".png", etc.)
+    ext = Path(filename).suffix.lower()
+
     # Organize path on where this media file will be uploaded.
-    return f'clients/{instance.user.username}/uploads/avatar/{filename}'
+    return f'clients/{instance.user.username}/avatar{ext}'
 
 
 class Client(models.Model):

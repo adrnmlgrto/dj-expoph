@@ -1,10 +1,10 @@
+from pathlib import Path
 from typing import override
 
 from django.contrib.auth.models import User
 from django.db import models
 
 from .utils import Department, UserStatus
-
 
 __all__ = ['Admin']
 
@@ -13,8 +13,11 @@ def avatar_upload_to(instance: 'Admin', filename: str):
     """
     Generator function specifying where to upload admin's avatar.
     """
+    # Get the filename's extension. (".jpg", ".png", etc.)
+    ext = Path(filename).suffix.lower()
+
     # Organize path on where this media file will be uploaded.
-    return f'admins/{instance.admin_number}/uploads/avatar/{filename}'
+    return f'admins/{instance.admin_number}/avatar{ext}'
 
 
 class Admin(models.Model):
