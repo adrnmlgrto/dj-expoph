@@ -49,6 +49,10 @@ INSTALLED_APPS = [
     # Third-Party Application(s)
     'ninja',
     'storages',
+
+    # Cleanup Package
+    # NOTE: Should be the last app defined based on docs.
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
