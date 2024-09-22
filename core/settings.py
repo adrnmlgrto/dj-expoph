@@ -30,8 +30,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -135,7 +134,11 @@ AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
 AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+AWS_S3_CUSTOM_DOMAIN = (
+    f'{AWS_S3_ENDPOINT_URL.lstrip('https://').rstrip('/s3')}'
+    f'/object/{AWS_STORAGE_BUCKET_NAME}'
+)
 
 # Amazon S3 Storage (Configurations)
 AWS_S3_FILE_OVERWRITE = True
@@ -155,20 +158,19 @@ STORAGES = {
         'OPTIONS': S3_OPTIONS
     },
     'staticfiles': {
-        'BACKEND': 'storages.backends.s3.S3Storage',
-        'OPTIONS': S3_OPTIONS
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'
     }
 }
 
 
 # Media files (User Profile Pictures, etc.)
-
+# NOTE: Uses the Amazon S3 buckets via supabase.
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -19,6 +19,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
+from loguru import logger
+
 from .api import api
 
 urlpatterns = [
@@ -28,7 +30,17 @@ urlpatterns = [
 
 # Add handling for media files in development mode.
 if settings.DEBUG:
+
+    logger.debug(settings.MEDIA_URL)
+    logger.debug(settings.MEDIA_ROOT)
     urlpatterns += static(
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT
+    )
+
+    logger.debug(settings.STATIC_URL)
+    logger.debug(settings.STATIC_ROOT)
+    urlpatterns += static(
+        settings.STATIC_URL,
+        document_root=settings.STATIC_ROOT
     )
