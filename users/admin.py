@@ -1,7 +1,9 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from .models import Admin as AdminProfile
 from .models import Client
+from .models.utils import UserStatus
 
 
 @admin.register(AdminProfile)
@@ -15,8 +17,7 @@ class AdminProfileAdmin(admin.ModelAdmin):
         'user',
         'full_name',
         'department',
-        'is_active',
-        'is_verified',
+        'current_status',
         'created_at'
     )
 
@@ -40,36 +41,74 @@ class AdminProfileAdmin(admin.ModelAdmin):
     )
 
     # Fields that are read-only.
-    readonly_fields = ('admin_number', 'user', 'created_at', 'modified_at')
+    readonly_fields = (
+        'admin_number',
+        'user',
+        'created_at',
+        'modified_at',
+        'current_status'
+    )
 
     # Fieldsets for organizing the fields in the detail page.
     fieldsets = (
-        ('Basic Information', {
-            'fields': (
-                'user',
-                'admin_number',
-                'first_name',
-                'last_name',
-                'department',
-                'avatar'
-            )
-        }),
-        ('Status', {
-            'fields': (
-                'is_active',
-                'is_verified'
-            )
-        }),
-        ('Timestamps', {
-            'fields': (
-                'created_at',
-                'modified_at'
-            ),
-        }),
+        (
+            'Basic Information', {
+                'fields': (
+                    'user',
+                    'admin_number',
+                    'first_name',
+                    'last_name',
+                    'department',
+                    'avatar'
+                )
+            }
+        ),
+        (
+            'Status', {
+                'fields': (
+                    'is_active',
+                    'is_verified',
+                    'current_status'
+                )
+            }
+        ),
+        (
+            'Timestamps', {
+                'fields': (
+                    'created_at',
+                    'modified_at'
+                ),
+            }
+        ),
     )
 
     # Ordering of admins.
     ordering = ('-created_at',)
+
+    def current_status(self, obj: AdminProfile):
+        """
+        Display the current status of the admin user.
+        """
+        STATUSES_MAPPING = {
+            UserStatus.ACTIVE: (
+                '<span style="color: green;">'
+                f'{UserStatus.ACTIVE.label}</span>'
+            ),
+            UserStatus.PENDING: (
+                '<span style="color: orange;">'
+                f'{UserStatus.PENDING.label}</span>'
+            ),
+            UserStatus.SUSPENDED: (
+                '<span style="color: red;">'
+                f'{UserStatus.SUSPENDED.label}</span>'
+            ),
+            UserStatus.UNKNOWN: (
+                '<span style="color: grey;">'
+                f'{UserStatus.UNKNOWN.label}</span>'
+            )
+        }
+
+        return format_html(STATUSES_MAPPING[obj.status])
 
 
 @admin.register(Client)
@@ -82,8 +121,7 @@ class ClientAdmin(admin.ModelAdmin):
         'display_name',
         'user',
         'mobile_number',
-        'is_active',
-        'is_verified',
+        'current_status',
         'created_at'
     )
 
@@ -105,7 +143,11 @@ class ClientAdmin(admin.ModelAdmin):
     )
 
     # Fields that are read-only.
-    readonly_fields = ('created_at', 'modified_at')
+    readonly_fields = (
+        'created_at',
+        'modified_at',
+        'current_status'
+    )
 
     # Fieldsets for organizing the fields in the detail page.
     fieldsets = (
@@ -125,7 +167,8 @@ class ClientAdmin(admin.ModelAdmin):
                 'fields': (
                     'is_active',
                     'is_verified',
-                    'is_sms_verified'
+                    'is_sms_verified',
+                    'current_status'
                 )
             }
         ),
@@ -148,3 +191,28 @@ class ClientAdmin(admin.ModelAdmin):
 
     # Ordering of clients.
     ordering = ('-created_at',)
+
+    def current_status(self, obj: Client):
+        """
+        Display the current status of the admin user.
+        """
+        STATUSES_MAPPING = {
+            UserStatus.ACTIVE: (
+                '<span style="color: green;">'
+                f'{UserStatus.ACTIVE.label}</span>'
+            ),
+            UserStatus.PENDING: (
+                '<span style="color: orange;">'
+                f'{UserStatus.PENDING.label}</span>'
+            ),
+            UserStatus.SUSPENDED: (
+                '<span style="color: red;">'
+                f'{UserStatus.SUSPENDED.label}</span>'
+            ),
+            UserStatus.UNKNOWN: (
+                '<span style="color: grey;">'
+                f'{UserStatus.UNKNOWN.label}</span>'
+            )
+        }
+
+        return format_html(STATUSES_MAPPING[obj.status])

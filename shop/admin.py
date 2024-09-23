@@ -68,7 +68,8 @@ class ShopAdmin(admin.ModelAdmin):
         'shop_id',
         'follower_count',
         'created_at',
-        'modified_at'
+        'modified_at',
+        'verification_status'
     )
 
     fieldsets = (
@@ -78,16 +79,16 @@ class ShopAdmin(admin.ModelAdmin):
                     'shop_id',
                     'owner',
                     'description',
-                    'follower_count',
-                    'is_active',
+                    'follower_count'
                 )
             }
         ),
         (
-            'Verification Documents', {
+            'Verification Details', {
                 'fields': (
                     'legal_id',
-                    'verification_document'
+                    'verification_document',
+                    'verification_status'
                 )
             }
         ),
@@ -107,7 +108,7 @@ class ShopAdmin(admin.ModelAdmin):
 
     actions = ['approve_shops', 'reject_shops']
 
-    def description_truncated(self, obj):
+    def description_truncated(self, obj: Shop):
         """
         Truncate the description for better display in list view.
         """
@@ -119,7 +120,7 @@ class ShopAdmin(admin.ModelAdmin):
 
     description_truncated.short_description = 'Description'
 
-    def verification_status(self, obj):
+    def verification_status(self, obj: Shop):
         """
         Display the verification status with color coding.
         """
@@ -139,7 +140,7 @@ class ShopAdmin(admin.ModelAdmin):
     verification_status.short_description = 'Verification Status'
     verification_status.admin_order_field = 'is_active'
 
-    def view_legal_id(self, obj):
+    def view_legal_id(self, obj: Shop):
         """
         Provide a link to view the uploaded legal ID.
         """
@@ -153,7 +154,7 @@ class ShopAdmin(admin.ModelAdmin):
 
     view_legal_id.short_description = 'Legal ID'
 
-    def view_verification_documents(self, obj):
+    def view_verification_documents(self, obj: Shop):
         """
         Provide links to view the uploaded verification documents.
         """
@@ -167,6 +168,7 @@ class ShopAdmin(admin.ModelAdmin):
 
     view_verification_documents.short_description = 'Verification Document'
 
+    @admin.action(description='Approve a shop after verifying documents.')
     def approve_shops(self, request, queryset):
         """
         Admin action to approve selected shops.
@@ -182,6 +184,7 @@ class ShopAdmin(admin.ModelAdmin):
 
     approve_shops.short_description = 'Approve selected shops'
 
+    @admin.action(description='Remove the approved shop status.')
     def reject_shops(self, request, queryset):
         """
         Admin action to reject selected shops by deactivating them.
@@ -228,7 +231,7 @@ class ShopFollowerAdmin(admin.ModelAdmin):
 
     list_per_page = 25
 
-    def fk_shop_display(self, obj):
+    def fk_shop_display(self, obj: ShopFollower):
         """
         Display the shop's name.
         """
@@ -236,7 +239,7 @@ class ShopFollowerAdmin(admin.ModelAdmin):
 
     fk_shop_display.short_description = 'Shop'
 
-    def fk_client_display(self, obj):
+    def fk_client_display(self, obj: ShopFollower):
         """
         Display the client's display name.
         """
