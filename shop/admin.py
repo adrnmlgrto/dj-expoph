@@ -64,7 +64,42 @@ class ShopAdmin(admin.ModelAdmin):
         'description'
     )
 
-    readonly_fields = ('follower_count', 'created_at', 'modified_at')
+    readonly_fields = (
+        'shop_id',
+        'follower_count',
+        'created_at',
+        'modified_at'
+    )
+
+    fieldsets = (
+        (
+            'Shop Details', {
+                'fields': (
+                    'shop_id',
+                    'owner',
+                    'description',
+                    'follower_count',
+                    'is_active',
+                )
+            }
+        ),
+        (
+            'Verification Documents', {
+                'fields': (
+                    'legal_id',
+                    'verification_document'
+                )
+            }
+        ),
+        (
+            'Timestamps', {
+                'fields': (
+                    'created_at',
+                    'modified_at',
+                )
+            }
+        ),
+    )
 
     inlines = [ShopFollowerInline]
 
@@ -173,6 +208,11 @@ class ShopFollowerAdmin(admin.ModelAdmin):
         'date_followed'
     )
 
+    list_display_links = (
+        'fk_client_display',
+        'fk_shop_display'
+    )
+
     list_filter = (
         'fk_shop',
         'date_followed'
@@ -192,7 +232,7 @@ class ShopFollowerAdmin(admin.ModelAdmin):
         """
         Display the shop's name.
         """
-        return obj.fk_shop.name
+        return obj.fk_shop.shop_id
 
     fk_shop_display.short_description = 'Shop'
 
