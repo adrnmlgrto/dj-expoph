@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Django Application(s)
+    'shop.apps.ShopConfig',
     'users.apps.UsersConfig',
 
     # Third-Party Application(s)

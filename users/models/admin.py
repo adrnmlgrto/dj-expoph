@@ -131,7 +131,7 @@ class Admin(models.Model):
 
     @override
     def __str__(self):
-        return f'{self.admin_number} - {self.full_name} ({self.department})'
+        return f'{self.admin_number}'
 
     class Meta:
         ordering = ['-created_at']
