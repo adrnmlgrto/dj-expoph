@@ -145,7 +145,7 @@ class Client(models.Model):
 
     @override
     def __str__(self):
-        return f'{self.display_name} - Client'
+        return f'{self.display_name}'
 
     class Meta:
         ordering = ['-created_at']
