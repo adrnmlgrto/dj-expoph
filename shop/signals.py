@@ -13,8 +13,8 @@ def increment_follower_count(
     upon creating a `ShopFollower` instance.
     """
     if created:
-        instance.shop.follower_count += 1
-        instance.shop.save()
+        instance.fk_shop.follower_count += 1
+        instance.fk_shop.save()
 
 
 @receiver(post_delete, sender=ShopFollower)
@@ -25,5 +25,5 @@ def decrement_follower_count(
     Decrements the shop's total follower count
     upon creating a `ShopFollower` instance.
     """
-    instance.shop.follower_count -= 1
-    instance.shop.save()
+    instance.fk_shop.follower_count -= 1
+    instance.fk_shop.save()
