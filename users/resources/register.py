@@ -68,7 +68,7 @@ def register_admin(
         )
 
     # Log the event onto the command line.
-    logger.info(
+    logger.success(
         'Successfully registered administrator '
         f'"{admin.full_name}" ({user.username}).'
     )
@@ -112,7 +112,7 @@ def register_client(
         )
 
     # Log the event onto the command line.
-    logger.info(
+    logger.success(
         f'Successfully registered "{client.display_name}" '
         f'({user.username}) client!'
     )
