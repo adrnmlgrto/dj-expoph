@@ -18,7 +18,7 @@ def legal_id_upload_to(instance: 'Shop', filename: str):
     ext = Path(filename).suffix.lower()
 
     # Organize path on where this media file will be uploaded.
-    return f'clients/{instance.user.username}/uploads/legal-id{ext}'
+    return f'clients/{instance.owner.user.username}/uploads/legal-id{ext}'
 
 
 def document_upload_to(instance: 'Shop', filename: str):
@@ -30,7 +30,10 @@ def document_upload_to(instance: 'Shop', filename: str):
     ext = Path(filename).suffix.lower()
 
     # Organize path on where this media file will be uploaded.
-    return f'clients/{instance.user.username}/uploads/business-permit{ext}'
+    return (
+        f'clients/{instance.owner.user.username}'
+        f'/uploads/business-permit{ext}'
+    )
 
 
 class Shop(models.Model):
@@ -77,7 +80,7 @@ class Shop(models.Model):
     # on `ShopFollower` create/delete.
     follower_count = models.PositiveIntegerField(
         default=0,
-        verbose_name='Store Follower Count'
+        verbose_name='Followers Count'
     )
 
     # Verification Field(s)
