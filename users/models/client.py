@@ -3,6 +3,7 @@ from typing import override
 
 from django.contrib.auth.models import User
 from django.db import models
+from loguru import logger
 
 from .utils import UserStatus
 
@@ -103,6 +104,49 @@ class Client(models.Model):
             (False, False): UserStatus.UNKNOWN
         }
         return STATUS_MAP[(self.is_active, self.is_verified)]
+
+    def follow_shop(self, shop_id: str) -> None:
+        """
+        Follow a specific shop given a `shop_id` string.
+        """
+        from shop.models.shop import Shop
+
+        if self.shops_followed.filter(
+            fk_shop__shop_id=shop_id
+        ).exists():
+            logger.warning(
+                f'{self.display_name} is already following "{shop_id}".'
+            )
+            return  # do nothing as they follow already
+
+        # Follow the shop by creating a `ShopFollower` instance.
+        shop = Shop.objects.get(shop_id=shop_id)
+        self.shops_followed.create(fk_shop=shop)
+        logger.success(
+            f'{self.display_name} followed "{shop_id}" successfully!'
+        )
+
+    def unfollow_shop(self, shop_id: str) -> None:
+        """
+        Unfollow a specific shop given a `shop_id` string.
+        """
+        if self.shops_followed.filter(
+            fk_shop__shop_id=shop_id
+        ).exists() is False:
+            logger.warning(
+                f'{self.display_name} isn\'t following "{shop_id}".'
+            )
+            return  # do nothing as they aren't even followed
+
+        # Unfollow the shop followed by client
+        # by deleting the `ShopFollower` instance.
+        shop_to_delete = self.shops_followed.get(
+            fk_shop__shop_id=shop_id
+        )
+        shop_to_delete.delete()
+        logger.success(
+            f'{self.display_name} unfollowed "{shop_id}" successfully!'
+        )
 
     def set_status(self, status: UserStatus | str) -> None:
         """
