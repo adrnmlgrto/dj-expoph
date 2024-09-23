@@ -1,5 +1,3 @@
-import sys
-
 from django.contrib.auth.models import User
 from django.db import transaction
 from loguru import logger
@@ -11,12 +9,6 @@ __all__ = [
     'register_admin',
     'register_client'
 ]
-
-# Set the logger formatting.
-logger.add(
-    sink=sys.stdout,
-    format="{time:MMMM D, YYYY > HH:mm:ss} | {level} | {message}"
-)
 
 
 @logger.catch
