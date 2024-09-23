@@ -42,9 +42,7 @@ class ShopAdmin(admin.ModelAdmin):
     """
     list_display = (
         'shop_id',
-        'name',
         'owner',
-        'is_active',
         'follower_count',
         'created_at',
         'modified_at',
@@ -61,7 +59,6 @@ class ShopAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        'name',
         'owner__user__username',
         'owner__display_name',
         'description'
@@ -114,7 +111,7 @@ class ShopAdmin(admin.ModelAdmin):
         if obj.legal_id:
             legal_id_url = obj.legal_id.url
             return format_html(
-                '<a href="{}" target="_blank">View Legal ID</a>',
+                '<a href="{}" target="_blank">View ID</a>',
                 legal_id_url
             )
         return format_html('<span style="color: red;">No Legal ID</span>')
@@ -128,7 +125,7 @@ class ShopAdmin(admin.ModelAdmin):
         if obj.verification_document:
             verification_doc_url = obj.verification_document.url
             return format_html(
-                '<a href="{}" target="_blank">View Verification Document</a>',
+                '<a href="{}" target="_blank">View Document</a>',
                 verification_doc_url
             )
         return format_html('<span style="color: red;">No Document</span>')
