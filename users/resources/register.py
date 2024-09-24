@@ -2,8 +2,12 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from loguru import logger
 
-from users.models import Admin, Client
-from users.models.utils import Department
+from core.decorators.validate import validate_params
+from core.handlers import resize_image_file_handler
+
+from ..models import Admin, Client
+from ..models.utils import Department
+from .schemas import RegisterAdmin, RegisterClient
 
 __all__ = [
     'register_admin',
@@ -11,14 +15,14 @@ __all__ = [
 ]
 
 
-@logger.catch
+@validate_params(RegisterAdmin)
 def register_admin(
     username: str,
     email: str,
     password: str,
     first_name: str,
     last_name: str,
-    department: Department = Department.ADMIN
+    **extras
 ) -> Admin:
     """
     Register an administrator user account.
@@ -27,13 +31,12 @@ def register_admin(
     then proceeds to create our own record for the
     administrator along with their profile details.
     """
-    # Do a quick check for the department argument passed.
-    if department not in Department.values:
-        raise ValueError(f'"{department}" is invalid.')
-
     # Encapsulate the creation process within atomic transaction
     # to enable rollback(s) when an unexpected error occurs.
     with transaction.atomic():
+
+        # Get the department from extra kwargs.
+        department = extras.get('department')
 
         # Create a superuser instance when the departmnent is `ADMIN`.
         if department == Department.ADMIN or department == 'sysadmin':
@@ -59,6 +62,14 @@ def register_admin(
             department=department
         )
 
+        # Get `avatar` on params, if passed.
+        avatar = extras.get('avatar')
+
+        # Process the avatar file if passed via a handler, then save.
+        if avatar:
+            avatar_img = resize_image_file_handler(avatar)
+            admin.avatar.save(avatar_img.name, avatar_img)
+
     # Log the event onto the command line.
     logger.success(
         'Successfully registered administrator '
@@ -68,14 +79,13 @@ def register_admin(
     return admin
 
 
-@logger.catch
+@validate_params(RegisterClient)
 def register_client(
     username: str,
     email: str,
     password: str,
     mobile_number: str,
-    display_name: str = None,
-    shipping_address: str = None
+    **extras
 ) -> Client:
     """
     Register a client / customer account.
@@ -97,11 +107,16 @@ def register_client(
 
         # After creating the user, create the `Client` instance.
         client = Client.objects.create(
-            user=user,
-            display_name=display_name,
-            mobile_number=mobile_number,
-            shipping_address=shipping_address
+            user=user, mobile_number=mobile_number, **extras
         )
+
+        # Get `avatar` on params, if passed.
+        avatar = extras.get('avatar')
+
+        # Process the avatar file if passed via a handler, then save.
+        if avatar:
+            avatar_img = resize_image_file_handler(avatar)
+            client.avatar.save(avatar_img.name, avatar_img)
 
     # Log the event onto the command line.
     logger.success(
