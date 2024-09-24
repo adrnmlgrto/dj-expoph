@@ -30,15 +30,12 @@ def register_client(
     try:
 
         # Create the client record using the details.
-        client: Client = register_client_user(**details.model_dump())
+        client: Client = register_client_user(
+            avatar=avatar, **details.model_dump()
+        )
 
         # NOTE: Do NOT log the payload data that uses
         # `model_dump()` with secrets. (See `ClientSchemaIn`)
-
-        # If an avatar is uploaded along in the API, set on client.
-        if avatar:
-            client.avatar.save(avatar.name, avatar)
-            client.refresh_from_db()
 
         return 201, client
 
