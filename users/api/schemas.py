@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from ninja import Field, Schema
-from pydantic import SecretStr, field_serializer
+from pydantic import EmailStr, field_serializer
+from pydantic.types import SecretStr
 
 from ..models.utils import UserStatus
 
@@ -18,7 +19,7 @@ class ClientSchemaIn(Schema):
         ...,
         description='Client\'s username for authentication.'
     )
-    email: str = Field(
+    email: EmailStr = Field(
         ...,
         description='Email to set for the client user.'
     )
@@ -45,8 +46,16 @@ class ClientSchemaIn(Schema):
 
 
 class UserSchemaOut(Schema):
-    username: str
-    email: str
+    username: str = Field(
+        ...,
+        description='User\'s username for authentication.',
+        examples=['johndoe01']
+    )
+    email: str = Field(
+        ...,
+        description='User\'s email for authentication.',
+        examples=['johndoe@expoph.com']
+    )
 
 
 class ClientSchemaOut(Schema):
@@ -76,5 +85,11 @@ class ClientSchemaOut(Schema):
         description='Client user\'s current status.',
         examples=['A', 'P', 'S', 'U']
     )
-    created_at: datetime
-    modified_at: datetime
+    created_at: datetime = Field(
+        ...,
+        description='Time of creation for the client user.'
+    )
+    modified_at: datetime = Field(
+        ...,
+        description='Time of modification for the client user.'
+    )
