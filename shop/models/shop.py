@@ -60,6 +60,7 @@ class Shop(models.Model):
     # payout_account = models.OneToOneField(
     #     'billing.PayoutAccount',
     #     on_delete=models.CASCADE,
+    #     default=None,
     #     null=True,
     #     blank=True,
     #     related_name='shop',
