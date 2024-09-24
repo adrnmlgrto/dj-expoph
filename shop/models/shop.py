@@ -77,8 +77,6 @@ class Shop(models.Model):
 
     # Follower Counts
     # NOTE: For de-normalization for optimization.
-    # TODO: Add increment/decrement on signals
-    # on `ShopFollower` create/delete.
     follower_count = models.PositiveIntegerField(
         default=0,
         verbose_name='Followers Count'
