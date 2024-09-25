@@ -34,5 +34,8 @@ pillow==10.4.0
 # PostgreSQL
 psycopg==3.2.2
 
+# Supabase Client
+supabase==2.7.4
+
 # Unit Tests
 pytest-django==4.9.0
