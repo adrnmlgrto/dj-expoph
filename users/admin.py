@@ -30,8 +30,8 @@ class AdminProfileAdmin(admin.ModelAdmin):
 
     # Searchable fields in the admin panel.
     search_fields = (
-        'user__username',
         'admin_number',
+        'user__username',
         'first_name',
         'last_name',
         'department'
@@ -51,8 +51,8 @@ class AdminProfileAdmin(admin.ModelAdmin):
         (
             'Basic Information', {
                 'fields': (
-                    'user',
                     'admin_number',
+                    'user',
                     'first_name',
                     'last_name',
                     'department',
@@ -116,6 +116,7 @@ class ClientAdmin(admin.ModelAdmin):
     """
     # Fields to display in the admin list view.
     list_display = (
+        'client_number',
         'client_user',
         'mobile_number',
         'current_status',
@@ -132,6 +133,7 @@ class ClientAdmin(admin.ModelAdmin):
 
     # Searchable fields in the admin panel.
     search_fields = (
+        'client_number',
         'user__username',
         'display_name',
         'mobile_number'
@@ -139,6 +141,7 @@ class ClientAdmin(admin.ModelAdmin):
 
     # Fields that are read-only.
     readonly_fields = (
+        'client_number',
         'created_at',
         'modified_at',
         'current_status'
@@ -149,6 +152,7 @@ class ClientAdmin(admin.ModelAdmin):
         (
             'Basic Information', {
                 'fields': (
+                    'client_number',
                     'user',
                     'avatar',
                     'display_name',

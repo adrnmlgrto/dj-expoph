@@ -12,26 +12,26 @@ __all__ = ['Shop', 'ShopFollower']
 def legal_id_upload_to(instance: 'Shop', filename: str):
     """
     Generator function specifying where to upload the
-    shop owner's verification ID.
+    shop client owner's verification ID.
     """
     # Get the filename's extension. (".jpg", ".png", ".pdf", etc.)
     ext = Path(filename).suffix.lower()
 
     # Organize path on where this media file will be uploaded.
-    return f'clients/{instance.owner.user.username}/uploads/legal-id{ext}'
+    return f'clients/{instance.client.user.username}/uploads/legal-id{ext}'
 
 
 def document_upload_to(instance: 'Shop', filename: str):
     """
     Generator function specifying where to upload the
-    shop owner's verification document.
+    shop client owner's verification document.
     """
     # Get the filename's extension. (".pdf")
     ext = Path(filename).suffix.lower()
 
     # Organize path on where this media file will be uploaded.
     return (
-        f'clients/{instance.owner.user.username}'
+        f'clients/{instance.client.user.username}'
         f'/uploads/business-permit{ext}'
     )
 
@@ -49,11 +49,13 @@ class Shop(models.Model):
     )
 
     # Client Owner of the Shop
-    owner = models.OneToOneField(
+    client = models.OneToOneField(
         'users.Client',
         on_delete=models.CASCADE,
         related_name='shop',
-        verbose_name='Shop Owner'
+        to_field='client_number',
+        verbose_name='Shop Owner',
+        help_text='Client who '
     )
 
     # Future Enhancement: Payout account for shop owner(s).
@@ -159,7 +161,7 @@ class Shop(models.Model):
 
     @override
     def __str__(self):
-        return f'{self.owner.display_name} (SHOP)'
+        return f'{self.client.client_number}'
 
     class Meta:
         ordering = ['-created_at', '-modified_at']

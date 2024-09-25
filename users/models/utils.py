@@ -1,6 +1,6 @@
-import uuid
-
 from django.db.models import TextChoices
+
+from core.utilities.uid import generate_uid
 
 __all__ = [
     'Department',
@@ -35,11 +35,11 @@ def generate_admin_number(department: Department | str) -> str:
     """
     Generates a unique admin number based on the department prefix.
 
-    Format: <DEPT-PREFIX>-<SHORT-UUID>
-    Example: SYS-9F1A73B4
+    Format: <DEPT-PREFIX>-<MMDDYY>-<6-CHAR-UUID>
+    Example: SYS-092524-9F1A73
     """
     # Define department prefixes.
-    department_prefix_map = {
+    DEPARTMENT_PREFIX_MAP = {
         Department.ADMIN: 'SYS',
         Department.BILLING: 'BIL',
         Department.SALES: 'SAL',
@@ -48,13 +48,25 @@ def generate_admin_number(department: Department | str) -> str:
     }
 
     # Get the prefix based on the department.
-    prefix = department_prefix_map.get(department)
+    prefix = DEPARTMENT_PREFIX_MAP.get(department)
 
     # In case prefix is `None`, we'll raise an error.
     if not prefix:
         raise ValueError(f'Department "{department}" is invalid.')
 
-    # Generate a short UUID and capitalize all characters.
-    short_uuid = str(uuid.uuid4())[:8].upper()
+    # Return the generated admin number w/ prefix.
+    return generate_uid(prefix)
 
-    return f'{prefix}-{short_uuid}'
+
+def generate_client_number() -> str:
+    """
+    Generates a unique admin number based on the department prefix.
+
+    Format: <CX>-<MMDDYY>-<6-CHAR-UUID>
+    Example: CX-092524-9F1A73
+    """
+    # Define client prefix.
+    CLIENT_PREFIX = 'CX'
+
+    # Return the generated client number w/ prefix.
+    return generate_uid(CLIENT_PREFIX)

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from loguru import logger
 
-from .utils import UserStatus
+from .utils import UserStatus, generate_client_number
 
 __all__ = ['Client']
 
@@ -31,6 +31,14 @@ class Client(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='client'
+    )
+
+    # Unique identification number.
+    client_number = models.CharField(
+        max_length=20,
+        unique=True,
+        editable=False,
+        verbose_name='Client Number'
     )
 
     # Profile Details
@@ -180,6 +188,10 @@ class Client(models.Model):
         """
         Overridden save method for the `Client` model.
         """
+        # Set the client number on creation.
+        if self._state.adding and not self.client_number:
+            self.client_number = generate_client_number()
+
         # When display name isn't set, use `User.username`.
         if not self.display_name:
             self.display_name = self.user.username

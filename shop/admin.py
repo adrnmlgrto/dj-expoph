@@ -27,12 +27,12 @@ class ShopFollowerInline(admin.TabularInline):
         'date_followed'
     )
 
-    def fk_client_display(self, obj):
+    @admin.display(description='Client')
+    def fk_client_display(self, obj: ShopFollower):
         """
         Display the client's display name.
         """
-        return obj.fk_client.display_name
-    fk_client_display.short_description = 'Client'
+        return obj.fk_client.client_number
 
 
 @admin.register(Shop)
@@ -58,8 +58,8 @@ class ShopAdmin(admin.ModelAdmin):
 
     search_fields = (
         'shop_id',
-        'owner__user__username',
-        'owner__display_name',
+        'client__user__username',
+        'client__display_name',
         'description'
     )
 
@@ -76,7 +76,7 @@ class ShopAdmin(admin.ModelAdmin):
             'Shop Details', {
                 'fields': (
                     'shop_id',
-                    'owner',
+                    'client',
                     'description',
                     'follower_count'
                 )
@@ -126,7 +126,7 @@ class ShopAdmin(admin.ModelAdmin):
         """
         Display the client user that owns the shop.
         """
-        return f'{obj.owner.user.username} ({obj.owner.user.email})'
+        return f'{obj.client.client_number}'
 
     @admin.display(description='Verification Status', ordering='is_active')
     def verification_status(self, obj: Shop):

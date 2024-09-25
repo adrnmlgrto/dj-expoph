@@ -4,7 +4,7 @@ from typing import override
 from django.contrib.auth.models import User
 from django.db import models
 
-from .utils import Department, UserStatus
+from .utils import Department, UserStatus, generate_admin_number
 
 __all__ = ['Admin']
 
@@ -32,7 +32,7 @@ class Admin(models.Model):
 
     # Unique identification number.
     admin_number = models.CharField(
-        max_length=15,
+        max_length=20,
         unique=True,
         editable=False,
         verbose_name='Admin Number'
@@ -128,6 +128,20 @@ class Admin(models.Model):
         # Save the instance after updating statuses.
         # NOTE: This will update the `modified_at` timestamp.
         self.save()
+
+    @override
+    def save(self, *args, **kwargs):
+        """
+        Overridden save method for the `Admin` model.
+        """
+        # Set the admin number on creation.
+        if self._state.adding and not self.admin_number:
+            self.admin_number = generate_admin_number(
+                department=self.department
+            )
+
+        # Save the admin model instance.
+        super().save(*args, **kwargs)
 
     @override
     def __str__(self):
