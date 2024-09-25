@@ -55,7 +55,7 @@ class Shop(models.Model):
         related_name='shop',
         to_field='client_number',
         verbose_name='Shop Owner',
-        help_text='Client who '
+        help_text='The client who owns the shop.'
     )
 
     # Future Enhancement: Payout account for shop owner(s).
