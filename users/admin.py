@@ -14,15 +14,12 @@ class AdminProfileAdmin(admin.ModelAdmin):
     # Fields to display in the admin list view
     list_display = (
         'admin_number',
-        'user',
         'full_name',
         'department',
         'current_status',
-        'created_at'
+        'created_at',
+        'modified_at'
     )
-
-    # Fields that can be clicked to navigate to the detail page.
-    list_display_links = ('admin_number',)
 
     # Filters for filtering admins.
     list_filter = (
@@ -85,6 +82,7 @@ class AdminProfileAdmin(admin.ModelAdmin):
     # Ordering of admins.
     ordering = ('-created_at',)
 
+    @admin.display(description='Current Status')
     def current_status(self, obj: AdminProfile):
         """
         Display the current status of the admin user.
@@ -118,15 +116,12 @@ class ClientAdmin(admin.ModelAdmin):
     """
     # Fields to display in the admin list view.
     list_display = (
-        'display_name',
-        'user',
+        'client_user',
         'mobile_number',
         'current_status',
-        'created_at'
+        'created_at',
+        'modified_at'
     )
-
-    # Fields that can be clicked to navigate to the detail page.
-    list_display_links = ('display_name',)
 
     # Filters for filtering clients.
     list_filter = (
@@ -192,9 +187,18 @@ class ClientAdmin(admin.ModelAdmin):
     # Ordering of clients.
     ordering = ('-created_at',)
 
+    @admin.display(description='Client User')
+    def client_user(self, obj: Client):
+        """
+        Display both the display name and username of the
+        client user on the admin dashboard.
+        """
+        return f'{obj.display_name} ({obj.user.username})'
+
+    @admin.display(description='Current Status')
     def current_status(self, obj: Client):
         """
-        Display the current status of the admin user.
+        Display the current status of the client user.
         """
         STATUSES_MAPPING = {
             UserStatus.ACTIVE: (

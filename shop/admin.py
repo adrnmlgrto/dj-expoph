@@ -42,23 +42,22 @@ class ShopAdmin(admin.ModelAdmin):
     """
     list_display = (
         'shop_id',
-        'owner',
-        'follower_count',
-        'created_at',
-        'modified_at',
+        'owned_by',
         'verification_status',
         'view_legal_id',
-        'view_verification_documents'
+        'view_verification_documents',
+        'created_at',
+        'modified_at'
     )
 
     list_filter = (
         'is_active',
         'created_at',
-        'modified_at',
-        'owner__user__username'
+        'modified_at'
     )
 
     search_fields = (
+        'shop_id',
         'owner__user__username',
         'owner__display_name',
         'description'
@@ -106,8 +105,12 @@ class ShopAdmin(admin.ModelAdmin):
 
     list_per_page = 25  # Number of shops to display per page
 
-    actions = ['approve_shops', 'reject_shops']
+    actions = [
+        'approve_shops',
+        'reject_shops'
+    ]
 
+    @admin.display(description='Shop Description')
     def description_truncated(self, obj: Shop):
         """
         Truncate the description for better display in list view.
@@ -118,8 +121,14 @@ class ShopAdmin(admin.ModelAdmin):
             ) if len(obj.description) > 75 else obj.description
         return ''
 
-    description_truncated.short_description = 'Description'
+    @admin.display(description='Owned By')
+    def owned_by(self, obj: Shop):
+        """
+        Display the client user that owns the shop.
+        """
+        return f'{obj.owner.user.username} ({obj.owner.user.email})'
 
+    @admin.display(description='Verification Status', ordering='is_active')
     def verification_status(self, obj: Shop):
         """
         Display the verification status with color coding.
@@ -137,9 +146,7 @@ class ShopAdmin(admin.ModelAdmin):
                 '<span style="color: red;">Unverified</span>'
             )
 
-    verification_status.short_description = 'Verification Status'
-    verification_status.admin_order_field = 'is_active'
-
+    @admin.display(description='Legal ID')
     def view_legal_id(self, obj: Shop):
         """
         Provide a link to view the uploaded legal ID.
@@ -152,8 +159,7 @@ class ShopAdmin(admin.ModelAdmin):
             )
         return format_html('<span style="color: red;">No Legal ID</span>')
 
-    view_legal_id.short_description = 'Legal ID'
-
+    @admin.display(description='Verification Document')
     def view_verification_documents(self, obj: Shop):
         """
         Provide links to view the uploaded verification documents.
@@ -166,9 +172,7 @@ class ShopAdmin(admin.ModelAdmin):
             )
         return format_html('<span style="color: red;">No Document</span>')
 
-    view_verification_documents.short_description = 'Verification Document'
-
-    @admin.action(description='Approve a shop after verifying documents.')
+    @admin.action(description='Approve selected shops')
     def approve_shops(self, request, queryset):
         """
         Admin action to approve selected shops.
@@ -182,9 +186,7 @@ class ShopAdmin(admin.ModelAdmin):
             messages.SUCCESS
         )
 
-    approve_shops.short_description = 'Approve selected shops'
-
-    @admin.action(description='Remove the approved shop status.')
+    @admin.action(description='Reject selected shops')
     def reject_shops(self, request, queryset):
         """
         Admin action to reject selected shops by deactivating them.
@@ -197,8 +199,6 @@ class ShopAdmin(admin.ModelAdmin):
             messages.WARNING
         )
 
-    reject_shops.short_description = 'Reject selected shops'
-
 
 @admin.register(ShopFollower)
 class ShopFollowerAdmin(admin.ModelAdmin):
@@ -206,19 +206,13 @@ class ShopFollowerAdmin(admin.ModelAdmin):
     Custom admin configuration for the `ShopFollower` model.
     """
     list_display = (
-        'fk_client_display',
-        'fk_shop_display',
+        'id',
+        'following_status',
         'date_followed'
-    )
-
-    list_display_links = (
-        'fk_client_display',
-        'fk_shop_display'
     )
 
     list_filter = (
-        'fk_shop',
-        'date_followed'
+        'date_followed',
     )
 
     search_fields = (
@@ -227,22 +221,20 @@ class ShopFollowerAdmin(admin.ModelAdmin):
         'fk_shop__name'
     )
 
+    readonly_fields = (
+        'date_followed',
+    )
+
     ordering = ('-date_followed',)
 
     list_per_page = 25
 
-    def fk_shop_display(self, obj: ShopFollower):
+    @admin.display(description='Shop Following Status')
+    def following_status(self, obj: ShopFollower):
         """
-        Display the shop's name.
+        Display for admin list view for showing
+        following statuses for clients to shops.
         """
-        return obj.fk_shop.shop_id
-
-    fk_shop_display.short_description = 'Shop'
-
-    def fk_client_display(self, obj: ShopFollower):
-        """
-        Display the client's display name.
-        """
-        return obj.fk_client.display_name
-
-    fk_client_display.short_description = 'Client'
+        return (
+            f'{obj.fk_client.display_name} followed {obj.fk_shop.shop_id}'
+        )
