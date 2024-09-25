@@ -71,7 +71,9 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates',  # Ensure the global templates directory is included  # noqa
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -104,19 +106,19 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+_DJANGO_PW_AUTH_PATH = 'django.contrib.auth.password_validation'
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': f'{_DJANGO_PW_AUTH_PATH}.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': f'{_DJANGO_PW_AUTH_PATH}.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': f'{_DJANGO_PW_AUTH_PATH}.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': f'{_DJANGO_PW_AUTH_PATH}.NumericPasswordValidator',
     },
 ]
 
@@ -125,57 +127,37 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
-# Amazon S3 Storage
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
-AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
-
-AWS_S3_CUSTOM_DOMAIN = (
-    f'{AWS_S3_ENDPOINT_URL.lstrip('https://').rstrip('/s3')}'
-    f'/object/{AWS_STORAGE_BUCKET_NAME}'
-)
-
-# Amazon S3 Storage (Configurations)
-AWS_S3_FILE_OVERWRITE = True
-AWS_DEFAULT_ACL = None
-
-# S3 Options
-S3_OPTIONS = {
-    'access_key': AWS_ACCESS_KEY_ID,
-    'secret_key': AWS_SECRET_ACCESS_KEY,
-    'bucket_name': AWS_STORAGE_BUCKET_NAME,
-    'region_name': AWS_S3_REGION_NAME,
-    'endpoint_url': AWS_S3_ENDPOINT_URL
-}
+# Storage Configurations
+# TODO: Create custom storage backend for `supabase` storage.
 STORAGES = {
     'default': {
         'BACKEND': 'storages.backends.s3.S3Storage',
-        'OPTIONS': S3_OPTIONS
+        'OPTIONS': {
+            'access_key': os.getenv('SUPABASE_S3_ACCESS_KEY_ID'),
+            'secret_key': os.getenv('SUPABASE_S3_SECRET_ACCESS_KEY'),
+            'bucket_name': os.getenv('SUPABASE_S3_STORAGE_BUCKET_NAME'),
+            'region_name': os.getenv('SUPABASE_S3_REGION_NAME'),
+            'endpoint_url': os.getenv('SUPABASE_S3_ENDPOINT_URL')
+        }
     },
     'staticfiles': {
         'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'
     }
 }
 
-
-# Media files (User Profile Pictures, etc.)
-# NOTE: Uses the Amazon S3 buckets via supabase.
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Login-related settings.
+LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/users/profile/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

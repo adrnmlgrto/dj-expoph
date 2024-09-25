@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}ExpoPH{% endblock %}</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind CDN Script -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Add your CSS files or other meta tags here -->
+</head>
+<body>
+    <header>
+        <!-- Add a navigation bar or logo here -->
+        <h1>Welcome to ExpoPH</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Page-specific content will be inserted here -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <!-- Add footer content here -->
+        <p>&copy; 2024 ExpoPH. All rights reserved.</p>
+    </footer>
+</body>
+</html>
