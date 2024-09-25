@@ -32,7 +32,7 @@ python-dotenv==1.0.1
 pillow==10.4.0
 
 # PostgreSQL
-psycopg2==2.9.9
+psycopg==3.2.2
 
 # Unit Tests
 pytest-django==4.9.0
