@@ -153,11 +153,15 @@ STORAGES = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    (BASE_DIR / 'static')
+]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Login-related settings.
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/users/profile/'
+LOGOUT_REDIRECT_URL = LOGIN_URL
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
