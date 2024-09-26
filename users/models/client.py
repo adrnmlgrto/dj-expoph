@@ -57,6 +57,9 @@ class Client(models.Model):
         max_length=20,
         verbose_name='Mobile Number'
     )
+
+    # TODO: Need to have separate model `Address`
+    # before filling out this shipping address field.
     shipping_address = models.CharField(
         max_length=255,
         blank=True,
@@ -76,6 +79,8 @@ class Client(models.Model):
         default=False,
         verbose_name='Verified'
     )
+
+    # Checking if the mobile number of client is valid.
     is_sms_verified = models.BooleanField(
         default=False,
         verbose_name='SMS Verified',

@@ -14,7 +14,7 @@ class AdminProfileAdmin(admin.ModelAdmin):
     # Fields to display in the admin list view
     list_display = (
         'admin_number',
-        'full_name',
+        'display_name',
         'department',
         'current_status',
         'created_at',

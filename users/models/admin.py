@@ -83,9 +83,10 @@ class Admin(models.Model):
     )
 
     @property
-    def full_name(self) -> str:
+    def display_name(self) -> str:
         """
         Property for returning the admin user's full name.
+        We'll use an admin's full name as the display name.
         """
         return f'{self.first_name} {self.last_name}'
 

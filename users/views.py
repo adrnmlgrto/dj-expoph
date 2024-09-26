@@ -10,5 +10,5 @@ class ProfileDashboardView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         logger.debug(context)
         context['user'] = self.request.user
-        logger.debug(context['user'].admin.avatar.url)
+        logger.debug(context['user'])
         return context

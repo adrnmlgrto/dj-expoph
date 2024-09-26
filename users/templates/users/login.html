@@ -3,10 +3,44 @@
 {% block title %}Login - ExpoPH{% endblock %}
 
 {% block content %}
-<h1>Login</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-</form>
+<div class="flex justify-center items-center h-screen">
+    <div class="card w-96 bg-base-100 shadow-xl">
+        <div class="card-body">
+            <h2 class="card-title text-center">Login to ExpoPH</h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Form fields with DaisyUI classes -->
+                <div class="form-control">
+                    {{ form.non_field_errors }}
+
+                    <label class="label">
+                        <span class="label-text">Username</span>
+                    </label>
+                    <input type="text" class="input input-bordered" name="username" placeholder="Enter your username">
+                    {{ form.username.errors }}
+                </div>
+
+                <div class="form-control mt-4">
+                    <label class="label">
+                        <span class="label-text">Password</span>
+                    </label>
+                    <input type="password" class="input input-bordered" name="password" placeholder="Enter your password">
+                    {{ form.password.errors }}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-control mt-6">
+                    <button class="btn btn-primary" type="submit">Login</button>
+                </div>
+            </form>
+
+            <!-- Additional Links (optional) -->
+            <div class="text-center mt-4">
+                <a href="#" class="link link-hover text-sm">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,15 +7,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Tailwind CDN Script -->
+    <!-- Tailwind CDN Script with DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Add your CSS files or other meta tags here -->
 </head>
 <body>
     <header>
-        <!-- Add a navigation bar or logo here -->
-        <h1>Welcome to ExpoPH</h1>
+        <!-- Display the NavBar only when logged in -->
+        {% if user.is_authenticated %}
+
+        <!-- Navigation Bar -->
+        <div class="navbar bg-base-100">
+            <div class="flex-none">
+                <button class="btn btn-square btn-ghost">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    class="inline-block h-5 w-5 stroke-current">
+                    <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                </button>
+            </div>
+            <div class="flex-1">
+                <a class="btn btn-ghost text-xl">ExpoPH</a>
+            </div>
+
+            <!-- Profile Button with Dropdown Actions -->
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                  <div class="w-10 rounded-full">
+
+                    <!-- Show user avatar or default avatar if not uploaded -->
+                    <img
+                      alt="Profile Button"
+                      src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
+                      onerror="this.onerror=null; this.src='{% static 'images/broken-avatar.png' %}';" />
+                  </div>
+                </div>
+                <ul
+                  tabindex="0"
+                  class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                  <!-- <li>
+                    <a class="justify-between">
+                      Profile
+                      <span class="badge">New</span>
+                    </a>
+                  </li> -->
+                  <li><a>Settings</a></li>
+                  <li>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Logout</button>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+            </div>
+        </div>
+        {% endif %}
     </header>
 
     <main>
@@ -23,9 +80,12 @@
         {% endblock %}
     </main>
 
-    <footer>
-        <!-- Add footer content here -->
-        <p>&copy; 2024 ExpoPH. All rights reserved.</p>
-    </footer>
+    <footer class="footer footer-center bg-base-300 text-base-content p-4">
+        <aside>
+            {% now "Y" as current_year %}
+            <p>Copyright © {{ current_year }} - All right reserved by ExpoPH</p>
+        </aside>
+      </footer>
+
 </body>
 </html>
