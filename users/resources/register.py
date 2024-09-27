@@ -62,7 +62,7 @@ def _register_user(
     # Log the event.
     logger.success(
         f'Successfully registered {'staff ' if is_staff else ''}'
-        f'{user.email} ({user.display_name}).'
+        f'{user.email} ({user.display_name})'
     )
 
     return user
