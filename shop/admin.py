@@ -84,7 +84,7 @@ class ShopAdmin(admin.ModelAdmin):
             'Shop Details', {
                 'fields': (
                     'shop_id',
-                    'shop_name'
+                    'shop_name',
                     'description',
                     'follower_count'
                 )
@@ -138,7 +138,7 @@ class ShopAdmin(admin.ModelAdmin):
         """
         Display the user's email that owns the shop.
         """
-        return f'{obj.fk_user.display_name} ({obj.fk_user.email})'
+        return f'{obj.user.display_name} ({obj.user.email})'
 
     @admin.display(description='Verification Status', ordering='is_active')
     def verification_status(self, obj: Shop):

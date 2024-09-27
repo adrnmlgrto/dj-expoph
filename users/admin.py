@@ -17,8 +17,9 @@ class CustomUserAdmin(UserAdmin):
         'email',
         'display_name',
         'is_staff',
-        'is_active',
-        'is_verified'
+        'current_status',
+        'created_at',
+        'modified_at'
     )
     list_filter = (
         'email',
@@ -28,10 +29,11 @@ class CustomUserAdmin(UserAdmin):
     )
     fieldsets = (
         (
-            None, {
+            'User Details', {
                 'fields': (
                     'email',
-                    'password'
+                    'password',
+                    'avatar'
                 )
             }
         ),
@@ -78,25 +80,24 @@ class CustomUserAdmin(UserAdmin):
         Display the current status of the client user.
         """
         STATUSES_MAPPING = {
-            UserStatus.ACTIVE: (
-                '<span style="color: green;">'
-                f'{UserStatus.ACTIVE.label}</span>'
+            UserStatus.ACTIVE.label: (
+                'green', UserStatus.ACTIVE.label
             ),
-            UserStatus.PENDING: (
-                '<span style="color: orange;">'
-                f'{UserStatus.PENDING.label}</span>'
+            UserStatus.PENDING.label: (
+                'orange', UserStatus.PENDING.label
             ),
-            UserStatus.SUSPENDED: (
-                '<span style="color: red;">'
-                f'{UserStatus.SUSPENDED.label}</span>'
+            UserStatus.SUSPENDED.label: (
+                'red', UserStatus.SUSPENDED.label
             ),
-            UserStatus.UNKNOWN: (
-                '<span style="color: grey;">'
-                f'{UserStatus.UNKNOWN.label}</span>'
-            )
+            UserStatus.UNKNOWN.label: (
+                'grey', UserStatus.UNKNOWN.label
+            ),
         }
 
-        return format_html(STATUSES_MAPPING[obj.status])
+        color, label = STATUSES_MAPPING[obj.status]
+        return format_html(
+            f'<span style="color: {color};">{label}</span>'
+        )
 
 
 # Register the subclassed custom user admin.

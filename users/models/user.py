@@ -18,6 +18,7 @@ __all__ = ['CustomUser']
 def avatar_upload_to(instance: 'CustomUser', filename: str):
     """
     Generator function specifying where to upload the user's avatar.
+    TODO: Use internal `uid` of the custom user instance as folder name.
     """
     # Get the filename's extension. (".jpg", ".png", etc.)
     ext = Path(filename).suffix.lower()
