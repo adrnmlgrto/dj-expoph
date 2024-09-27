@@ -21,4 +21,4 @@ class Http500Message(Schema):
 
 # TODO: Add routers per application. (09-19-2024)
 # api.add_router('/admins/', 'users.api.admin.router')
-api.add_router('/clients/', 'users.api.client.router')
+# api.add_router('/clients/', 'users.api.client.router')

@@ -2,6 +2,7 @@ import uuid
 from pathlib import Path
 from typing import override
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -12,50 +13,46 @@ __all__ = ['Shop', 'ShopFollower']
 def legal_id_upload_to(instance: 'Shop', filename: str):
     """
     Generator function specifying where to upload the
-    shop client owner's verification ID.
+    shop owner's verification ID.
+
+    TODO: Update path since will point to auth user model.
     """
     # Get the filename's extension. (".jpg", ".png", ".pdf", etc.)
     ext = Path(filename).suffix.lower()
 
     # Organize path on where this media file will be uploaded.
-    return f'clients/{instance.client.user.username}/uploads/legal-id{ext}'
+    return f'users/{instance.user.display_name}/uploads/legal-id{ext}'
 
 
 def document_upload_to(instance: 'Shop', filename: str):
     """
     Generator function specifying where to upload the
-    shop client owner's verification document.
+    shop owner's verification document.
     """
     # Get the filename's extension. (".pdf")
     ext = Path(filename).suffix.lower()
 
     # Organize path on where this media file will be uploaded.
     return (
-        f'clients/{instance.client.user.username}'
-        f'/uploads/business-permit{ext}'
+        f'users/{instance.user.display_name}'
+        f'/uploads/verification-document{ext}'
     )
 
 
 class Shop(models.Model):
     """
     Model representing a shop owned by a client.
-    """
-    # Unique Identifier for the Shop
-    shop_id = models.UUIDField(
-        editable=False,
-        default=uuid.uuid4,
-        unique=True,
-        verbose_name='Shop ID'
-    )
 
+    TODO: Add field(s) for social links (e.g. "X", "Facebook", etc.)
+    """
     # Client Owner of the Shop
-    client = models.OneToOneField(
-        'users.Client',
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='shop',
-        to_field='client_number',
+        to_field='email',
         verbose_name='Shop Owner',
-        help_text='The client who owns the shop.'
+        help_text='The user who owns the shop.'
     )
 
     # Future Enhancement: Payout account for shop owner(s).
@@ -69,6 +66,19 @@ class Shop(models.Model):
     #     verbose_name='Shop Payout Account',
     #     help_text='Bank account details for payouts.'
     # )
+
+    # Unique Identifier for the Shop
+    shop_id = models.UUIDField(
+        editable=False,
+        default=uuid.uuid4,
+        unique=True,
+        verbose_name='Shop ID'
+    )
+    shop_name = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name='Shop Name'
+    )
 
     # Shop Details
     description = models.TextField(
@@ -160,8 +170,20 @@ class Shop(models.Model):
                 )
 
     @override
+    def save(self, *args, **kwargs):
+        """
+        Overridden save method for the `Shop` model.
+        """
+        # Set a default shop name when not provided.
+        if not self.shop_name:
+            self.shop_name = f'{self.user.display_name}\'s Shop'
+
+        # Save the shop instance.
+        super().save(*args, **kwargs)
+
+    @override
     def __str__(self):
-        return f'{self.client.client_number}'
+        return self.shop_name
 
     class Meta:
         ordering = ['-created_at', '-modified_at']
@@ -174,12 +196,12 @@ class ShopFollower(models.Model):
     Model representing a shop follower-following
     relationship between a client and a shop.
     """
-    fk_client = models.ForeignKey(
-        'users.Client',
+    fk_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='shops_followed',
-        verbose_name='Client',
-        help_text='The client who follows the shop.'
+        verbose_name='User',
+        help_text='The user who follows the shop.'
     )
     fk_shop = models.ForeignKey(
         'shop.Shop',
@@ -196,8 +218,8 @@ class ShopFollower(models.Model):
 
     @override
     def __str__(self):
-        return f'{self.fk_client.display_name} - {self.fk_shop}'
+        return f'{self.fk_user.display_name} ({self.fk_shop})'
 
     class Meta:
         ordering = ['-date_followed']
-        unique_together = ('fk_client', 'fk_shop')
+        unique_together = ('fk_user', 'fk_shop')

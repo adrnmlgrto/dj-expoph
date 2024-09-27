@@ -4,11 +4,11 @@
 
 {% block content %}
 <h1>Profile Dashboard</h1>
-<p>Welcome, {{ user.admin.full_name }}!</p>
+<p>Welcome, {{ user.display_name }}!</p>
 
 <!-- Rendering of Client Avatar -->
-{% if user.admin.avatar %}
-    <img src="{{ user.admin.avatar.url }}" alt="Profile Avatar" style="width: 150px; height: 150px;"/>
+{% if user.avatar %}
+    <img src="{{ user.avatar.url }}" alt="Profile Avatar" style="width: 150px; height: 150px;"/>
 {% else %}
     <p>No avatar uploaded.</p>
 {% endif %}

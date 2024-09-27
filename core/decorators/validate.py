@@ -28,7 +28,8 @@ def validate_params(model: Type[BaseModel]):
             params = {**dict(zip(param_names, args)), **kwargs}
 
             # Validate the combined parameters using the Pydantic model.
-            validated_data = model(**params).model_dump()
+            # Make sure we're excluding none fields.
+            validated_data = model(**params).model_dump(exclude_none=True)
 
             # Call the original function with validated data.
             return func(**validated_data)

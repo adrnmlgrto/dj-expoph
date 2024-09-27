@@ -1,12 +1,7 @@
 from django.db.models import TextChoices
+from django.utils.translation import gettext_lazy as _
 
 from core.utilities.uid import generate_uid
-
-__all__ = [
-    'Department',
-    'UserStatus',
-    'generate_admin_number'
-]
 
 
 class Department(TextChoices):
@@ -25,10 +20,10 @@ class UserStatus(TextChoices):
     """
     Status choice(s) for users (client / admin).
     """
-    ACTIVE = 'A', 'Active'
-    SUSPENDED = 'S', 'Suspended'
-    PENDING = 'P', 'Pending Verification'
-    UNKNOWN = 'U', 'Unknown Status'
+    ACTIVE = 'A', _('Active')
+    SUSPENDED = 'S', _('Suspended')
+    PENDING = 'P', _('Pending Verification')
+    UNKNOWN = 'U', _('Unknown')
 
 
 def generate_admin_number(department: Department | str) -> str:
@@ -52,7 +47,7 @@ def generate_admin_number(department: Department | str) -> str:
 
     # In case prefix is `None`, we'll raise an error.
     if not prefix:
-        raise ValueError(f'Department "{department}" is invalid.')
+        raise ValueError(_(f'Department "{department}" is invalid.'))
 
     # Return the generated admin number w/ prefix.
     return generate_uid(prefix)
