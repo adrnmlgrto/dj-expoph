@@ -124,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Custom User Model
-# AUTH_USER_MODEL = 'users.CustomUser'  # uncomment when ready
+# AUTH_USER_MODEL = 'users.CustomUser'  # TODO: uncomment when ready
 
 
 # Internationalization

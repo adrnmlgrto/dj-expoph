@@ -54,10 +54,17 @@ class Shop(models.Model):
         unique=True,
         verbose_name='Shop ID'
     )
+    shop_name = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name='Shop Name'
+    )
 
     # Client Owner of the Shop
     # TODO: To point "settings.AUTH_USER_MODEL" as foreign key.
+    # user = models.OneToOneField(
     client = models.OneToOneField(
+        # 'settings.AUTH_USER_MODEL',
         'users.Client',
         on_delete=models.CASCADE,
         related_name='shop',
@@ -168,8 +175,21 @@ class Shop(models.Model):
                 )
 
     @override
+    def save(self, *args, **kwargs):
+        """
+        Overridden save method for the `Shop` model.
+        """
+        # Set a default shop name when not provided.
+        if not self.shop_name:
+            # self.shop_name = f'{self.user.display_name}\'s Shop'
+            self.shop_name = f'{self.client.display_name}\'s Shop'
+
+        # Save the shop instance.
+        super().save(*args, **kwargs)
+
+    @override
     def __str__(self):
-        return f'{self.client.client_number}'
+        return self.shop_name
 
     class Meta:
         ordering = ['-created_at', '-modified_at']
@@ -182,12 +202,15 @@ class ShopFollower(models.Model):
     Model representing a shop follower-following
     relationship between a client and a shop.
     """
+    # TODO: Change into `fk_user`.
+    # fk_user = models.ForeignKey(
     fk_client = models.ForeignKey(
         'users.Client',
         on_delete=models.CASCADE,
         related_name='shops_followed',
+        # verbose_name='User',
         verbose_name='Client',
-        help_text='The client who follows the shop.'
+        help_text='The user who follows the shop.'
     )
     fk_shop = models.ForeignKey(
         'shop.Shop',
@@ -204,8 +227,10 @@ class ShopFollower(models.Model):
 
     @override
     def __str__(self):
+        # return f'{self.fk_user.display_name} ({self.fk_shop})'
         return f'{self.fk_client.display_name} - {self.fk_shop}'
 
     class Meta:
         ordering = ['-date_followed']
+        # unique_together = ('fk_user', 'fk_shop')
         unique_together = ('fk_client', 'fk_shop')
