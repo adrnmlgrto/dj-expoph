@@ -3,12 +3,6 @@ from django.utils.translation import gettext_lazy as _
 
 from core.utilities.uid import generate_uid
 
-__all__ = [
-    'Department',
-    'UserStatus',
-    'generate_admin_number'
-]
-
 
 class Department(TextChoices):
     """

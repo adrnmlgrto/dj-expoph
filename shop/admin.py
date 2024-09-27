@@ -12,27 +12,27 @@ class ShopFollowerInline(admin.TabularInline):
     fk_name = 'fk_shop'
     extra = 0  # No extra blank forms
     readonly_fields = (
-        'fk_client',
+        'fk_user',
         'date_followed'
     )
     can_delete = True  # Allow deletion of followers
     verbose_name = 'Follower'
     verbose_name_plural = 'Followers'
     search_fields = (
-        'fk_client__user__username',
-        'fk_client__display_name'
+        'fk_user__email',
+        'fk_user__display_name'
     )
     list_display = (
-        'fk_client_display',
+        'fk_user_display',
         'date_followed'
     )
 
-    @admin.display(description='Client')
-    def fk_client_display(self, obj: ShopFollower):
+    @admin.display(description='User')
+    def fk_user_display(self, obj: ShopFollower):
         """
-        Display the client's display name.
+        Display the user's display name and email.
         """
-        return obj.fk_client.client_number
+        return f'{obj.fk_user.display_name} ({obj.fk_user.email})'
 
 
 @admin.register(Shop)
@@ -42,6 +42,7 @@ class ShopAdmin(admin.ModelAdmin):
     """
     list_display = (
         'shop_id',
+        'shop_name',
         'owned_by',
         'verification_status',
         'view_legal_id',
@@ -58,8 +59,8 @@ class ShopAdmin(admin.ModelAdmin):
 
     search_fields = (
         'shop_id',
-        'client__user__username',
-        'client__display_name',
+        'user__username',
+        'user__display_name',
         'description'
     )
 
@@ -73,21 +74,32 @@ class ShopAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (
+            'Shop Owner', {
+                'fields': (
+                    'user',
+                )
+            }
+        ),
+        (
             'Shop Details', {
                 'fields': (
                     'shop_id',
-                    'client',
+                    'shop_name'
                     'description',
                     'follower_count'
                 )
             }
         ),
         (
-            'Verification Details', {
+            None, {
+                'fields': ('verification_status',)
+            }
+        ),
+        (
+            'Documents for Verification', {
                 'fields': (
                     'legal_id',
-                    'verification_document',
-                    'verification_status'
+                    'verification_document'
                 )
             }
         ),
@@ -124,26 +136,22 @@ class ShopAdmin(admin.ModelAdmin):
     @admin.display(description='Owned By')
     def owned_by(self, obj: Shop):
         """
-        Display the client user that owns the shop.
+        Display the user's email that owns the shop.
         """
-        return f'{obj.client.client_number}'
+        return f'{obj.fk_user.display_name} ({obj.fk_user.email})'
 
     @admin.display(description='Verification Status', ordering='is_active')
     def verification_status(self, obj: Shop):
         """
         Display the verification status with color coding.
         """
-        if obj.is_active:
+        if obj.is_active and (obj.legal_id and obj.verification_document):
             return format_html(
                 '<span style="color: green;">Verified</span>'
             )
-        elif obj.verification_document:
-            return format_html(
-                '<span style="color: orange;">Pending Verification</span>'
-            )
         else:
             return format_html(
-                '<span style="color: red;">Unverified</span>'
+                '<span style="color: orange;">Pending Verification</span>'
             )
 
     @admin.display(description='Legal ID')
@@ -216,8 +224,9 @@ class ShopFollowerAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        'fk_client__user__username',
-        'fk_client__display_name',
+        'fk_user__email',
+        'fk_user__display_name',
+        'fk_shop__shop_id',
         'fk_shop__name'
     )
 
@@ -233,8 +242,8 @@ class ShopFollowerAdmin(admin.ModelAdmin):
     def following_status(self, obj: ShopFollower):
         """
         Display for admin list view for showing
-        following statuses for clients to shops.
+        following statuses for users to shops.
         """
         return (
-            f'{obj.fk_client.display_name} followed {obj.fk_shop.shop_id}'
+            f'{obj.fk_user.display_name} followed {obj.fk_shop.shop_name}'
         )
