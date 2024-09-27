@@ -13,6 +13,8 @@ def legal_id_upload_to(instance: 'Shop', filename: str):
     """
     Generator function specifying where to upload the
     shop client owner's verification ID.
+
+    TODO: Update path since will point to auth user model.
     """
     # Get the filename's extension. (".jpg", ".png", ".pdf", etc.)
     ext = Path(filename).suffix.lower()
@@ -25,6 +27,8 @@ def document_upload_to(instance: 'Shop', filename: str):
     """
     Generator function specifying where to upload the
     shop client owner's verification document.
+
+    TODO: Update path since will point to auth user model.
     """
     # Get the filename's extension. (".pdf")
     ext = Path(filename).suffix.lower()
@@ -39,8 +43,11 @@ def document_upload_to(instance: 'Shop', filename: str):
 class Shop(models.Model):
     """
     Model representing a shop owned by a client.
+
+    TODO: Add field(s) for social links (e.g. "X", "Facebook", etc.)
     """
     # Unique Identifier for the Shop
+    # TODO: To make unique shop "name" field after this.
     shop_id = models.UUIDField(
         editable=False,
         default=uuid.uuid4,
@@ -49,6 +56,7 @@ class Shop(models.Model):
     )
 
     # Client Owner of the Shop
+    # TODO: To point "settings.AUTH_USER_MODEL" as foreign key.
     client = models.OneToOneField(
         'users.Client',
         on_delete=models.CASCADE,
