@@ -20,6 +20,7 @@
 
         <!-- Navigation Bar -->
         <div class="navbar bg-base-100">
+
             <div class="flex-none">
                 <button class="btn btn-square btn-ghost">
                 <svg
@@ -35,8 +36,11 @@
                 </svg>
                 </button>
             </div>
+
             <div class="flex-1">
+              <form method="get" action="{% url 'index' %}">
                 <a class="btn btn-ghost text-xl">ExpoPH</a>
+              </form>
             </div>
 
             <!-- Profile Button with Dropdown Actions -->
@@ -47,7 +51,7 @@
                     <!-- Show user avatar or default avatar if not uploaded -->
                     <img
                       alt="Profile Button"
-                      src="{% if user.profile.avatar %}{{ user.profile.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
+                      src="{% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}"
                       onerror="this.onerror=null; this.src='{% static 'images/broken-avatar.png' %}';" />
                   </div>
                 </div>
