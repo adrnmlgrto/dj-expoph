@@ -14,6 +14,7 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
     list_display = (
+        'uid',
         'email',
         'display_name',
         'is_staff',
@@ -22,15 +23,20 @@ class CustomUserAdmin(UserAdmin):
         'modified_at'
     )
     list_filter = (
-        'email',
         'is_staff',
         'is_active',
         'is_verified'
+    )
+    readonly_fields = (
+        'uid',
+        'created_at',
+        'modified_at'
     )
     fieldsets = (
         (
             'User Details', {
                 'fields': (
+                    'uid',
                     'email',
                     'password',
                     'avatar'
@@ -67,6 +73,7 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
     search_fields = (
+        'uid',
         'email',
         'display_name'
     )

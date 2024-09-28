@@ -21,7 +21,7 @@ def legal_id_upload_to(instance: 'Shop', filename: str):
     ext = Path(filename).suffix.lower()
 
     # Organize path on where this media file will be uploaded.
-    return f'users/{instance.user.display_name}/uploads/legal-id{ext}'
+    return f'users/{instance.user.uid}/uploads/legal-id{ext}'
 
 
 def document_upload_to(instance: 'Shop', filename: str):
@@ -34,7 +34,7 @@ def document_upload_to(instance: 'Shop', filename: str):
 
     # Organize path on where this media file will be uploaded.
     return (
-        f'users/{instance.user.display_name}'
+        f'users/{instance.user.uid}'
         f'/uploads/verification-document{ext}'
     )
 

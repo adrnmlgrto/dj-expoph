@@ -1,3 +1,4 @@
+import os
 import random
 import string
 from pathlib import Path
@@ -8,6 +9,8 @@ from django.core.validators import validate_email
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from loguru import logger
+
+from core.utilities.snowflake import SnowflakeGenerator
 
 from ..managers import CustomUserManager
 from .utils import UserStatus
@@ -24,7 +27,7 @@ def avatar_upload_to(instance: 'CustomUser', filename: str):
     ext = Path(filename).suffix.lower()
 
     # Organize path on where this media file will be uploaded.
-    return f'users/{instance.display_name}/avatar{ext}'
+    return f'users/{instance.uid}/avatar{ext}'
 
 
 def default_display_name():
@@ -40,6 +43,18 @@ def default_display_name():
     return f'user-{random_str}'
 
 
+def generate_uid() -> int:
+    """
+    Generates a unique identifier number for a user.
+
+    NOTE: When having multi-deployments, opt to use `.env`
+    to set the `worker_id` to ensure unique generation(s).
+    """
+    pid = os.getpid() % 32  # limit pid between 0 and 31
+    uid = SnowflakeGenerator(worker_id=1, process_id=pid).generate_id()
+    return uid
+
+
 class CustomUser(AbstractUser):
     """
     The implementation of a customized `User` model.
@@ -52,6 +67,13 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     # TODO: Need to add `uid` field for unique identification.
+    uid = models.BigIntegerField(
+        unique=True,
+        editable=False,
+        default=generate_uid,
+        verbose_name='UID'
+    )
+
     # Remove username field, and make the email field unique.
     username = None
     email = models.EmailField(
@@ -194,3 +216,5 @@ class CustomUser(AbstractUser):
 
     class Meta:
         ordering = ['-created_at']
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
