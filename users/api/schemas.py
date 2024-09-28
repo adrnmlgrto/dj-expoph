@@ -7,89 +7,56 @@ from pydantic.types import SecretStr
 from ..models.utils import UserStatus
 
 
-class GetClientPath(Schema):
-    username: str = Field(
-        ...,
-        description='Client\'s username to retrieve.'
-    )
-
-
-class ClientSchemaIn(Schema):
-    username: str = Field(
-        ...,
-        description='Client\'s username for authentication.'
-    )
+class UserSchemaIn(Schema):
+    """
+    Schema for validating user request payload data.
+    """
     email: EmailStr = Field(
         ...,
-        description='Email to set for the client user.'
+        description='Email to set for the user.'
     )
     password: SecretStr = Field(
         ...,
-        description='Password to set for the client user.'
+        description='Password to set for the user.'
     )
-    mobile_number: str = Field(
-        ...,
-        description='Mobile number of the client user.'
-    )
-    display_name: str | None = Field(
+    display_name: str = Field(
         None,
-        description='Name to display for the client user.'
-    )
-    shipping_address: str | None = Field(
-        None,
-        description='Shipping address of the client user.'
+        description='Name to display for the user.'
     )
 
     @field_serializer('password')
-    def serialize_password_str(self, v: SecretStr):
-        return v.get_secret_value()
+    def serialize_password_str(self, pw: SecretStr):
+        return pw.get_secret_value()
 
 
 class UserSchemaOut(Schema):
-    username: str = Field(
-        ...,
-        description='User\'s username for authentication.',
-        examples=['johndoe01']
-    )
-    email: str = Field(
+    """
+    Schema for defining the response data for user representation.
+    """
+    email: EmailStr = Field(
         ...,
         description='User\'s email for authentication.',
         examples=['johndoe@expoph.com']
     )
-
-
-class ClientSchemaOut(Schema):
-    user: UserSchemaOut
-    mobile_number: str = Field(
+    display_name: str = Field(
         ...,
-        description='Mobile number of the client user.',
-        examples=['+639123456789']
-    )
-    avatar: str | None = Field(
-        None,
-        description='Avatar image of the client user.',
-        examples=['/media/clients/johndoe01/uploads/avatar/IMG_001.jpg']
-    )
-    display_name: str | None = Field(
-        None,
         description='Name to display for the client user.',
         examples=['johndoe01']
-    )
-    shipping_address: str | None = Field(
-        None,
-        description='Shipping address of the client user.',
-        examples=['123 Main St., Quezon City, 1112']
     )
     status: UserStatus = Field(
         ...,
         description='Client user\'s current status.',
-        examples=['A', 'P', 'S', 'U']
+        examples=UserStatus.values
     )
     created_at: datetime = Field(
         ...,
-        description='Time of creation for the client user.'
+        description='Time of creation for the user.'
     )
     modified_at: datetime = Field(
         ...,
-        description='Time of modification for the client user.'
+        description='Time of modification for the user.'
     )
+
+    @field_serializer('status')
+    def serialize_status_label(self, v: UserStatus):
+        return v.label

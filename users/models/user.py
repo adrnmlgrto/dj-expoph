@@ -51,6 +51,7 @@ class CustomUser(AbstractUser):
     # Set the custom user model manager.
     objects = CustomUserManager()
 
+    # TODO: Need to add `uid` field for unique identification.
     # Remove username field, and make the email field unique.
     username = None
     email = models.EmailField(
@@ -100,7 +101,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['display_name']
 
     @property
-    def status(self) -> str:
+    def status(self) -> UserStatus:
         """
         Property that returns the status label of the user.
         NOTE: Used only for the rendering of the status string.
@@ -111,7 +112,7 @@ class CustomUser(AbstractUser):
             (False, True): UserStatus.SUSPENDED,
             (False, False): UserStatus.UNKNOWN
         }
-        return STATUS_MAP[(self.is_active, self.is_verified)].label
+        return STATUS_MAP[(self.is_active, self.is_verified)]
 
     def set_status(self, status: UserStatus | str) -> None:
         """

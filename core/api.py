@@ -1,5 +1,5 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from ninja import NinjaAPI, Redoc, Schema
+from ninja import NinjaAPI, Redoc
 
 # Instantiate the NinjaAPI object.
 api = NinjaAPI(
@@ -10,15 +10,9 @@ api = NinjaAPI(
         'This is the official API for Expo PH for the '
         'individual resource endpoints.'
     ),
-    version='1.0.0'
+    version='1.0.1'
 )
 
 
-# Core response schemas.
-class Http500Message(Schema):
-    detail: str
-
-
 # TODO: Add routers per application. (09-19-2024)
-# api.add_router('/admins/', 'users.api.admin.router')
-# api.add_router('/clients/', 'users.api.client.router')
+api.add_router('/users/', 'users.api.user.router')
