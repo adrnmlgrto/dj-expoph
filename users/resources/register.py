@@ -43,12 +43,14 @@ def _register_user(
         if is_staff:
             user = User.objects.create_staff(
                 email=email,
-                password=password
+                password=password,
+                **extras
             )
         else:
             user = User.objects.create_user(
                 email=email,
-                password=password
+                password=password,
+                **extras
             )
 
         # Get `avatar` from the params, if passed.
