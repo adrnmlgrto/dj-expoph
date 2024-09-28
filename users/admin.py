@@ -79,24 +79,15 @@ class CustomUserAdmin(UserAdmin):
         """
         Display the current status of the client user.
         """
-        STATUSES_MAPPING = {
-            UserStatus.ACTIVE.label: (
-                'green', UserStatus.ACTIVE.label
-            ),
-            UserStatus.PENDING.label: (
-                'orange', UserStatus.PENDING.label
-            ),
-            UserStatus.SUSPENDED.label: (
-                'red', UserStatus.SUSPENDED.label
-            ),
-            UserStatus.UNKNOWN.label: (
-                'grey', UserStatus.UNKNOWN.label
-            ),
+        STATUS_COLOR_MAPPING = {
+            UserStatus.ACTIVE: 'green',
+            UserStatus.PENDING: 'orange',
+            UserStatus.SUSPENDED: 'red',
+            UserStatus.UNKNOWN: 'grey',
         }
-
-        color, label = STATUSES_MAPPING[obj.status]
+        color = STATUS_COLOR_MAPPING[obj.status]
         return format_html(
-            f'<span style="color: {color};">{label}</span>'
+            f'<span style="color: {color};">{obj.status.label}</span>'
         )
 
 
