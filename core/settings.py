@@ -140,7 +140,7 @@ USE_TZ = True
 # TODO: Create custom storage backend for `supabase` storage.
 STORAGES = {
     'default': {
-        'BACKEND': 'storages.backends.s3.S3Storage',
+        'BACKEND': 'core.storage_backends.SupabaseS3Storage',
         'OPTIONS': {
             'access_key': os.getenv('SUPABASE_S3_ACCESS_KEY_ID'),
             'secret_key': os.getenv('SUPABASE_S3_SECRET_ACCESS_KEY'),
