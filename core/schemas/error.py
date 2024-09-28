@@ -18,6 +18,21 @@ class Http404Message(Schema):
     )
 
 
+class Http422Message(Schema):
+    detail: list[dict[str, str]] = Field(
+        ...,
+        examples=[
+            [
+                {
+                    'type': 'missing',
+                    'loc': ['field1', 'field2'],
+                    'msg': 'Field required'
+                }
+            ]
+        ]
+    )
+
+
 class Http500Message(Schema):
     detail: str = Field(
         ...,
