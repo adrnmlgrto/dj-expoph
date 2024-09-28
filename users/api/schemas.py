@@ -40,12 +40,16 @@ class UserSchemaOut(Schema):
     )
     display_name: str = Field(
         ...,
-        description='Name to display for the client user.',
+        description='Name to display for the user.',
         examples=['johndoe01']
+    )
+    avatar: str | None = Field(
+        None,
+        description='User\'s avatar image.'
     )
     status: UserStatus = Field(
         ...,
-        description='Client user\'s current status.',
+        description='User\'s current status.',
         examples=UserStatus.values
     )
     created_at: datetime = Field(
