@@ -24,24 +24,24 @@ class SupabaseS3Storage(S3Storage):
 
             # Initialize the `supabase` client.
             sb: Client = create_client(
-                supabase_url=os.getenv("SUPABASE_API_URL"),
-                supabase_key=os.getenv("SUPABASE_API_KEY"),
+                supabase_url=os.getenv('SUPABASE_API_URL'),
+                supabase_key=os.getenv('SUPABASE_API_KEY'),
             )
             # Make an API request to get the "signedURL" from the response.
-            response = sb.storage.from_("expoph-bucket").create_signed_url(
+            response = sb.storage.from_('expoph-bucket').create_signed_url(
                 path=name,
                 expires_in=self.querystring_expire,  # 3600s
             )
-            url = response.get("signedURL", None)
+            url = response.get('signedURL', None)
 
             # Raise error when response doesn't contain the signed url.
             if url is None:
                 raise SupabaseObjectError(
-                    "Signed URL from supabase is empty or none."
+                    'Signed URL from supabase is empty or none.'
                 )
             return response.get("signedURL")
 
         except Exception as e:
             # Call the original `S3Storage.url()` as fallback.
-            logger.error(f"Error retrieving supabase-signed url: {e}")
+            logger.error(f'Error retrieving supabase-signed url: {e}')
             return super().url(name, parameters, expire, http_method)
