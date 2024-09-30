@@ -163,8 +163,8 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Login-related settings.
-LOGIN_URL = '/users/login/'
-LOGIN_REDIRECT_URL = '/users/profile/'
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'users:profile_dashboard'
 LOGOUT_REDIRECT_URL = LOGIN_URL
 
 # Default primary key field type
