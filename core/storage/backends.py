@@ -6,9 +6,7 @@ from storages.backends.s3 import S3Storage
 from storages.utils import clean_name
 from supabase import Client, create_client
 
-
-class SupabaseObjectError(Exception):
-    pass
+from .exceptions import SupabaseObjectError
 
 
 class SupabaseS3Storage(S3Storage):
@@ -18,6 +16,23 @@ class SupabaseS3Storage(S3Storage):
 
     @override
     def url(self, name, parameters=None, expire=None, http_method=None):
+        """
+        Generates a signed URL for accessing a file in the
+        Supabase storage bucket.
+
+        Args:
+            name (str): The name of the file to generate a signed URL for.
+            parameters (dict, optional): Additional parameters to include in
+                the signed URL. Defaults to None.
+            expire (int, optional): The time in seconds until the signed URL
+                expires. Defaults to None.
+            http_method (str, optional): The HTTP method to use when accessing
+                the file. Defaults to None.
+
+        Returns:
+            str: The signed URL for accessing the file. Will return the
+                default S3 URL if an error occurs.
+        """
         try:
             # Normalize and clean the name of the file from params.
             name = self._normalize_name(clean_name(name))
