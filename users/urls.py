@@ -1,27 +1,12 @@
-from django.contrib.auth.views import LoginView, LogoutView
-from django.urls import path, reverse_lazy
+from django.contrib.auth.views import LogoutView
+from django.urls import path
 
-from .views import ProfileDashboardView
+from .views import CustomLoginView, ProfileDashboardView, RegisterView
 
 app_name = 'users'
 urlpatterns = [
-    path(
-        'login/',
-        LoginView.as_view(
-            template_name='users/login.html',
-            redirect_authenticated_user=True,
-            success_url=reverse_lazy('profile_dashboard')
-        ),
-        name='login'
-    ),
-    path(
-        'profile/',
-        ProfileDashboardView.as_view(),
-        name='profile_dashboard'
-    ),
-    path(
-        'logout/',
-        LogoutView.as_view(),
-        name='logout'
-    )
+    path('register/', RegisterView.as_view(), name='register'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('profile/', ProfileDashboardView.as_view(), name='profile')
 ]

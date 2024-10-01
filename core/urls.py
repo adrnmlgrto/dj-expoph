@@ -18,27 +18,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from django.views.generic import RedirectView
 
 from .api import api
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/users/login/',
-                                  permanent=False), name='index'),
     path('admin/', admin.site.urls),
     path('api/', api.urls),
     path('users/', include('users.urls')),
 ]
 
-# Add handling for media files in development mode.
+# Add handling for serving static files in development mode.
 if settings.DEBUG:
 
     urlpatterns += static(
         settings.STATIC_URL,
         document_root=settings.STATIC_ROOT
-    )
-
-    urlpatterns += static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT
     )
