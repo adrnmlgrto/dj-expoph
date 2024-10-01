@@ -3,6 +3,7 @@ from django.urls import path, reverse_lazy
 
 from .views import ProfileDashboardView
 
+app_name = 'users'
 urlpatterns = [
     path(
         'login/',

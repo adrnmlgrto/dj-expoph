@@ -140,7 +140,7 @@ USE_TZ = True
 # TODO: Create custom storage backend for `supabase` storage.
 STORAGES = {
     'default': {
-        'BACKEND': 'storages.backends.s3.S3Storage',
+        'BACKEND': 'core.storage.backends.SupabaseS3Storage',
         'OPTIONS': {
             'access_key': os.getenv('SUPABASE_S3_ACCESS_KEY_ID'),
             'secret_key': os.getenv('SUPABASE_S3_SECRET_ACCESS_KEY'),
@@ -163,8 +163,8 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Login-related settings.
-LOGIN_URL = '/users/login/'
-LOGIN_REDIRECT_URL = '/users/profile/'
+LOGIN_URL = 'users:login'
+LOGIN_REDIRECT_URL = 'users:profile_dashboard'
 LOGOUT_REDIRECT_URL = LOGIN_URL
 
 # Default primary key field type
