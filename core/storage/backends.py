@@ -42,10 +42,18 @@ class SupabaseS3Storage(S3Storage):
                 supabase_url=os.getenv('SUPABASE_API_URL'),
                 supabase_key=os.getenv('SUPABASE_API_KEY'),
             )
+
+            # NOTE: The bucket ID is the storage bucket name from env.
+            bucket_id = os.getenv('SUPABASE_S3_STORAGE_BUCKET_NAME')
+            if not bucket_id:
+                raise SupabaseObjectError(
+                    'Supabase S3 storage bucket name is not set.'
+                )
+
             # Make an API request to get the "signedURL" from the response.
-            response = sb.storage.from_('expoph-bucket').create_signed_url(
+            response = sb.storage.from_(bucket_id).create_signed_url(
                 path=name,
-                expires_in=self.querystring_expire,  # 3600s
+                expires_in=self.querystring_expire,  # 3600s = 1hr
             )
             url = response.get('signedURL', None)
 
