@@ -211,11 +211,11 @@ class ProductInventory(models.Model):
             bool: True if the product is in stock, False otherwise.
         """
         # Digital products are always in stock unless explicitly unlisted.
-        if self.product.product_type == 'DIG':
+        if self.product.product_type == ProductType.DIGITAL:
             return self.product.is_listed
 
         # Physical products are in stock only if quantity > 0 and listed.
-        elif self.product.product_type == 'PHY':
+        elif self.product.product_type == ProductType.PHYSICAL:
             return self.qty > 0 and self.product.is_listed
 
         return False
