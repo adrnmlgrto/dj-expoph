@@ -135,6 +135,10 @@ class Product(models.Model):
     def save(self, *args, **kwargs) -> None:
         """
         Overridden save method for the `Product` model.
+
+        Notes:
+        - If no SKU is provided, a unique SKU will be generated.
+        - If the product type is digital, the file field is required.
         """
         # Set a default SKU when not provided.
         if not self.sku:
@@ -144,11 +148,16 @@ class Product(models.Model):
             shop_name = self.fk_shop.shop_name.replace(' ', '')
             shop_name = shop_name.replace('\n', '').replace('\r', '')
 
-            # Set the SKU, make sure `pk` has padded 0s.
+            # Query products table of current shop.
+            # We'll get the number of products the shop has.
+            # NOTE: Avoid using `pk` as that uses products from all shops.
+            num_products = Product.objects.filter(fk_shop=self.fk_shop).count()
+
+            # Set the SKU, make sure `num_products` has padded 0s.
             # e.g. "XYZSHOP-PHY-000001"
             self.sku = (
                 f'{shop_name}-{self.product_type.value}'
-                f'-{str(self.pk).zfill(6)}'.upper()
+                f'-{str(num_products + 1).zfill(6)}'.upper()
             )
 
         # Save the product instance.
@@ -170,6 +179,9 @@ class ProductInventory(models.Model):
 
     NOTE: Do NOT automatically unlist a product when it's out of stock.
     """
+    # NOTE: When querying a product and you want to get its inventory,
+    # you may retrieve it using the `product` attribute.
+    # (e.g. `current_stock = product.inventory.qty`)
     product = models.OneToOneField(
         'shop.Product',
         on_delete=models.CASCADE,
