@@ -4,6 +4,10 @@ A **personal project** for a local marketplace platform in the Philippines, desi
 
 Future plans include integrated payouts for shop owners through designated payout accounts using local & international payment processors. This repository contains the backend implementation of the platform.
 
+## Features
+- Integrated product inventory management for shop owners.
+- Scheduled payouts for shop owners. (**TO BE IMPLEMENTED**)
+
 ## Requirements
 
 - **Python 3.12+**
